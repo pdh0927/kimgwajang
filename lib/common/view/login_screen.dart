@@ -60,7 +60,9 @@ class LoginScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FlutterLogin(
-      title: '김과장',
+      theme: LoginTheme(
+        logoWidth: 1,
+      ),
       logo: const AssetImage('asset/image/logo.png'),
       onLogin: (data) => _authUser(data, ref),
       onSignup: _signupUser,
