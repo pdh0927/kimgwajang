@@ -58,11 +58,11 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
                 icon: Icon(Icons.notifications), label: '민원 처리')
           ]),
       body: TabBarView(
-          physics: const NeverScrollableScrollPhysics(), // scroll로는 화면 전환 x
+          physics: const NeverScrollableScrollPhysics(),
           controller: controller,
           children: const [
-            ComplaintInputScreen(),
             ComplaintListScreen(),
+            ComplaintInputScreen(),
           ]),
     );
   }
