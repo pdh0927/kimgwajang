@@ -105,12 +105,15 @@ class ComplaintCard extends ConsumerWidget {
                                     content: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        CircularProgressIndicator(),
+                                        SizedBox(
+                                            height: 13,
+                                            width: 13,
+                                            child: CircularProgressIndicator()),
                                         SizedBox(width: 12),
                                         Text("AI가 답변을 생성 중입니다"),
                                         Image(
                                           image: AssetImage(
-                                              'asset/image/logo.png'),
+                                              'asset/image/logo_no_word.png'),
                                           height: 50,
                                           width: 50,
                                         )
@@ -220,23 +223,21 @@ class ComplaintCard extends ConsumerWidget {
                         children: [
                           ElevatedButton(
                               onPressed: () async {
+                                Complaint newComplaint = complaint.copyWith(
+                                    reply: _answerController.text);
+                                ref
+                                    .read(completedComplaintstListProvider
+                                        .notifier)
+                                    .addComplaint(newComplaint);
                                 ref
                                     .read(uncompletedComplaintstListProvider
                                         .notifier)
                                     .deleteComplaint(complaint);
-                                ref
-                                    .read(completedComplaintstListProvider
-                                        .notifier)
-                                    .addComplaint(complaint.copyWith(
-                                        reply: _answerController.text));
+
                                 final dao =
                                     ComplaintsDao(PersistanceDb.getInstance());
-                                print(complaint);
-                                print(complaint.copyWith(
-                                    reply: _answerController.text));
                                 await dao.updateComplaint(complaint.copyWith(
                                     reply: _answerController.text));
-
                                 Navigator.pop(context);
                               },
                               child: const Text("제출")),
@@ -278,25 +279,30 @@ class ComplaintCard extends ConsumerWidget {
         return AlertDialog(
           title: const Text('답변 평가하기'),
           titlePadding: const EdgeInsets.all(20),
-          contentPadding: const EdgeInsets.all(5),
-          actionsPadding: const EdgeInsets.all(10),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
           content: SizedBox(
-            height: 220,
-            width: double.maxFinite,
+            height: 336,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                _buildRatingOption(context, ref, '매우 만족', complaint, 5),
-                const Divider(thickness: 1, height: 0),
-                _buildRatingOption(context, ref, '대체로 만족', complaint, 4),
-                const Divider(thickness: 1, height: 0),
-                _buildRatingOption(context, ref, '보통', complaint, 3),
-                const Divider(thickness: 1, height: 0),
-                _buildRatingOption(context, ref, '대체로 불만족', complaint, 2),
-                const Divider(thickness: 1, height: 0),
-                _buildRatingOption(context, ref, '불만족', complaint, 1),
-                const Divider(thickness: 1, height: 0),
-                _buildRatingOption(context, ref, '매우 불만족', complaint, 0),
+              children: [
+                _buildRatingOption(context, ref, '매우 만족',
+                    Icons.sentiment_very_satisfied, complaint, 5),
+                _divider(),
+                _buildRatingOption(context, ref, '대체로 만족',
+                    Icons.sentiment_satisfied, complaint, 4),
+                _divider(),
+                _buildRatingOption(
+                    context, ref, '보통', Icons.sentiment_neutral, complaint, 3),
+                _divider(),
+                _buildRatingOption(context, ref, '대체로 불만족',
+                    Icons.sentiment_dissatisfied, complaint, 2),
+                _divider(),
+                _buildRatingOption(context, ref, '불만족',
+                    Icons.sentiment_very_dissatisfied, complaint, 1),
+                _divider(),
+                _buildRatingOption(
+                    context, ref, '매우 불만족', Icons.mood_bad, complaint, 0),
               ],
             ),
           ),
@@ -304,7 +310,7 @@ class ComplaintCard extends ConsumerWidget {
             TextButton(
               style: ButtonStyle(
                 padding: MaterialStateProperty.all<EdgeInsets>(
-                    const EdgeInsets.all(0)),
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 20)),
               ),
               child: const Text('취소'),
               onPressed: () {
@@ -317,18 +323,20 @@ class ComplaintCard extends ConsumerWidget {
     );
   }
 
+  Widget _divider() => const Divider(thickness: 1, height: 0);
+
   Widget _buildRatingOption(BuildContext context, WidgetRef ref, String title,
-      Complaint complaint, int rating) {
+      IconData icon, Complaint complaint, int rating) {
     return InkWell(
       onTap: () {
-        ref.read(uncompletedComplaintstListProvider.notifier).updateComplaint(
+        ref.read(completedComplaintstListProvider.notifier).updateComplaint(
               complaint.copyWith(evaluation: rating),
             );
         Navigator.pop(context);
       },
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(title),
+      child: ListTile(
+        leading: Icon(icon, color: Theme.of(context).primaryColor),
+        title: Text(title),
       ),
     );
   }
