@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/accounts/model/account_role.dart';
+import 'package:kimgwajang/accounts/provider/user_provider.dart';
 import 'package:kimgwajang/accounts/service/user_service.dart';
 import 'package:kimgwajang/common/view/root_tab.dart';
 import 'package:kimgwajang/user/model/user_model.dart';
-import 'package:kimgwajang/accounts/provider/user_proivder.dart';
 
 const users = {
   'admin@gmail.com': '1234',

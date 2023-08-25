@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:kimgwajang/accounts/model/accounts.dart';
+import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart' as p;
@@ -16,7 +17,7 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [Accounts], daos: [AccountsDao])
+@UseMoor(tables: [Accounts, Complaints], daos: [AccountsDao, ComplaintsDao])
 class PersistanceDb extends _$PersistanceDb {
   static PersistanceDb? _instance;
 

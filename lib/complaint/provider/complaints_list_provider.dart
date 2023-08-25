@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/complaint/const/data.dart';
-import 'package:kimgwajang/complaint/model/complaint_model.dart';
+import 'package:kimgwajang/persistance-db/persistance-db.dart';
 
-final uncompletedComplaintstListProvider = StateNotifierProvider<
-    UncomPletedComplaintsListNotifier, List<ComplaintModel>>((ref) {
+final uncompletedComplaintstListProvider =
+    StateNotifierProvider<UncomPletedComplaintsListNotifier, List<Complaint>>(
+        (ref) {
   return UncomPletedComplaintsListNotifier();
 });
 
-class UncomPletedComplaintsListNotifier
-    extends StateNotifier<List<ComplaintModel>> {
+class UncomPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
   UncomPletedComplaintsListNotifier() : super([]) {
     fetchUncompletedComplaintsData();
   }
@@ -19,12 +19,12 @@ class UncomPletedComplaintsListNotifier
     state = uncompletedComplaints;
   }
 
-  void addComplaint(ComplaintModel complaintModel) {
+  void addComplaint(Complaint complaintModel) {
     state = [...state, complaintModel];
   }
 
-  void updateComplaint(ComplaintModel updatedComplaint) {
-    List<ComplaintModel> updatedState = state.map((complaint) {
+  void updateComplaint(Complaint updatedComplaint) {
+    List<Complaint> updatedState = state.map((complaint) {
       if (complaint.title == updatedComplaint.title &&
           complaint.content == updatedComplaint.content) {
         return updatedComplaint;
@@ -35,19 +35,19 @@ class UncomPletedComplaintsListNotifier
     state = updatedState;
   }
 
-  void deleteComplaint(ComplaintModel complaintModel) {
+  void deleteComplaint(Complaint complaintModel) {
     state.remove(complaintModel);
     state = [...state];
   }
 }
 
-final completedComplaintstListProvider = StateNotifierProvider<
-    ComPletedComplaintsListNotifier, List<ComplaintModel>>((ref) {
+final completedComplaintstListProvider =
+    StateNotifierProvider<ComPletedComplaintsListNotifier, List<Complaint>>(
+        (ref) {
   return ComPletedComplaintsListNotifier();
 });
 
-class ComPletedComplaintsListNotifier
-    extends StateNotifier<List<ComplaintModel>> {
+class ComPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
   ComPletedComplaintsListNotifier() : super([]) {
     fetchCompletedComplaintsData();
   }
@@ -58,12 +58,12 @@ class ComPletedComplaintsListNotifier
     state = completedComplaints;
   }
 
-  void addComplaint(ComplaintModel complaintModel) {
+  void addComplaint(Complaint complaintModel) {
     state = [...state, complaintModel];
   }
 
-  void updateComplaint(ComplaintModel updatedComplaint) {
-    List<ComplaintModel> updatedState = state.map((complaint) {
+  void updateComplaint(Complaint updatedComplaint) {
+    List<Complaint> updatedState = state.map((complaint) {
       if (complaint.title == updatedComplaint.title &&
           complaint.content == updatedComplaint.content) {
         return updatedComplaint;

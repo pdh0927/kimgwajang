@@ -1,40 +1,48 @@
-class ComplaintModel {
-  final String? id;
-  final String title;
-  final String content;
-  final String reply;
-  final String imagePath;
-  final int? evaluation;
+import 'package:kimgwajang/persistance-db/persistance-db.dart';
+import 'package:moor/moor.dart';
 
-  ComplaintModel({
-    this.id,
-    required this.title,
-    required this.content,
-    required this.reply,
-    required this.imagePath,
-    this.evaluation,
-  });
+part 'complaint_model.g.dart';
 
-  ComplaintModel copyWith({
-    String? id,
-    String? title,
-    String? content,
-    String? reply,
-    String? imagePath,
-    int? evaluation,
-  }) {
-    return ComplaintModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      content: content ?? this.content,
-      reply: reply ?? this.reply,
-      imagePath: imagePath ?? this.imagePath,
-      evaluation: evaluation ?? this.evaluation,
-    );
+class Complaints extends Table {
+  TextColumn get id => text()();
+  TextColumn get title => text()();
+  TextColumn get content => text()();
+  TextColumn get reply => text().nullable()();
+  TextColumn get imagePath => text()();
+  IntColumn get evaluation => integer().nullable()();
+  TextColumn get category => text()();
+}
+
+@UseDao(tables: [Complaints])
+class ComplaintsDao extends DatabaseAccessor<PersistanceDb>
+    with _$ComplaintsDaoMixin {
+  ComplaintsDao(PersistanceDb db) : super(db);
+
+  Future<Complaint> findById(String id) async {
+    return (select(complaints)..where((t) => t.id.equals(id))).getSingle();
   }
 
-  @override
-  String toString() {
-    return 'ComplaintModel(id: $id, title: $title, content: $content, reply: $reply, imagePath: $imagePath, evaluation: $evaluation)';
+  Future<List<Complaint>> findAll() async {
+    return (select(complaints)).get();
+  }
+
+  Future<int> persistComplaint(Complaint complaint) async {
+    return into(complaints).insert(complaint);
+  }
+
+  Future<bool> updateComplaint(Complaint complaint) async {
+    return (update(complaints).replace(complaint));
+  }
+
+  Future<int> deleteAll() async {
+    return delete(complaints).go();
+  }
+
+  Future deleteById(String id) async {
+    return (delete(complaints)
+          ..where((t) {
+            return t.id.equals(id);
+          }))
+        .go();
   }
 }

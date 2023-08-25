@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kimgwajang/common/function/show_custon_dialog.dart';
-import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
+import 'package:kimgwajang/persistance-db/persistance-db.dart';
 
 class ComplaintInputScreen extends ConsumerStatefulWidget {
   const ComplaintInputScreen({super.key});
@@ -94,13 +94,15 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
                         contentController.text != '') {
                       ref
                           .read(uncompletedComplaintstListProvider.notifier)
-                          .addComplaint(ComplaintModel(
+                          .addComplaint(Complaint(
                             title: titleController.text,
                             content: contentController.text,
                             reply: '',
                             imagePath: _selectedImageFile == null
                                 ? ''
                                 : _selectedImageFile!.path,
+                            id: '',
+                            category: '',
                           ));
                       titleController.text = '';
                       contentController.text = '';

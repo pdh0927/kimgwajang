@@ -2,14 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kimgwajang/complaint/model/complaint_model.dart';
+import 'package:kimgwajang/accounts/provider/user_provider.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
-import 'package:kimgwajang/accounts/provider/user_proivder.dart';
 import 'package:kimgwajang/inference/models/solution_inference_request.dart';
 import 'package:kimgwajang/inference/service/solution_inference_service.dart';
+import 'package:kimgwajang/persistance-db/persistance-db.dart';
 
 class ComplaintCard extends ConsumerWidget {
-  final ComplaintModel complaint;
+  final Complaint complaint;
 
   const ComplaintCard({
     super.key,
@@ -19,7 +19,7 @@ class ComplaintCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     bool isAdmin = ref.watch(userProvider)!.isAdmin;
-    String statusLabel = complaint.reply.isEmpty
+    String statusLabel = complaint.reply == null
         ? '처리중'
         : (isAdmin
             ? (complaint.evaluation != null)
@@ -142,10 +142,10 @@ class ComplaintCard extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 5),
-                Text(complaint.reply,
+                Text(complaint.reply ?? '',
                     style:
                         const TextStyle(fontSize: 16, color: Colors.black54)),
-                if (complaint.reply.isNotEmpty)
+                if (complaint.reply != null)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: (complaint.evaluation != null)
@@ -169,8 +169,8 @@ class ComplaintCard extends ConsumerWidget {
     );
   }
 
-  void _showAnswer(BuildContext context, ComplaintModel complaint,
-      WidgetRef ref, String aiAnswer) {
+  void _showAnswer(BuildContext context, Complaint complaint, WidgetRef ref,
+      String aiAnswer) {
     final TextEditingController _answerController =
         TextEditingController(text: aiAnswer);
     bool useAI = true; // 인공지능으로 답변하기가 기본값으로 설정되었습니다.
@@ -262,7 +262,7 @@ class ComplaintCard extends ConsumerWidget {
   }
 
   void _showRatingOptions(
-      BuildContext context, ComplaintModel complaint, WidgetRef ref) {
+      BuildContext context, Complaint complaint, WidgetRef ref) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -309,7 +309,7 @@ class ComplaintCard extends ConsumerWidget {
   }
 
   Widget _buildRatingOption(BuildContext context, WidgetRef ref, String title,
-      ComplaintModel complaint, int rating) {
+      Complaint complaint, int rating) {
     return InkWell(
       onTap: () {
         ref.read(uncompletedComplaintstListProvider.notifier).updateComplaint(
