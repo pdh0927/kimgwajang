@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
-import 'package:kimgwajang/user/provider/user_proivder.dart';
+import 'package:kimgwajang/accounts/provider/user_proivder.dart';
+import 'package:kimgwajang/inference/models/solution_inference_request.dart';
+import 'package:kimgwajang/inference/service/solution_inference_service.dart';
 
 class ComplaintCard extends ConsumerWidget {
   final ComplaintModel complaint;
@@ -83,9 +85,62 @@ class ComplaintCard extends ConsumerWidget {
                     ),
                   ),
                 const SizedBox(height: 10),
-                const Text('답변:',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Row(
+                  children: [
+                    const Text('답변:',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    (complaint.reply == '' && isAdmin)
+                        ? ElevatedButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return const AlertDialog(
+                                    content: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircularProgressIndicator(),
+                                        SizedBox(width: 12),
+                                        Text("AI가 답변을 생성 중입니다"),
+                                        Image(
+                                          image: AssetImage(
+                                              'asset/image/logo.png'),
+                                          height: 50,
+                                          width: 50,
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+
+                              String? aiAnswer;
+                              var solvingService = SolutionInferenceService();
+                              solvingService
+                                  .inference(SolutionInferenceRequest(
+                                      title: "민원", content: complaint.content))
+                                  .then((value) {
+                                aiAnswer = value.getSolution();
+
+                                // 다이얼로그 닫기
+                                Navigator.of(context).pop();
+
+                                _showAnswer(context, complaint, ref, aiAnswer!);
+                              }).catchError((error) {
+                                // 에러 발생 시 다이얼로그 닫기
+                                Navigator.of(context).pop();
+                              });
+                            },
+                            child: const Text('답변 하기'),
+                          )
+                        : const SizedBox(height: 0, width: 0)
+                  ],
+                ),
                 const SizedBox(height: 5),
                 Text(complaint.reply,
                     style:
@@ -105,12 +160,93 @@ class ComplaintCard extends ConsumerWidget {
                                   },
                                   child: const Text('답변 평가하기'),
                                 )
-                              : SizedBox.shrink()))
+                              : const SizedBox(height: 0, width: 0)))
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  void _showAnswer(BuildContext context, ComplaintModel complaint,
+      WidgetRef ref, String aiAnswer) {
+    final TextEditingController _answerController =
+        TextEditingController(text: aiAnswer);
+    bool useAI = true; // 인공지능으로 답변하기가 기본값으로 설정되었습니다.
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              insetPadding: const EdgeInsets.all(10.0), // 주변의 여백 조정
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('민원 제목: ${complaint.title}'),
+                      const SizedBox(height: 16.0),
+                      TextField(
+                        controller: _answerController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: '답변 입력',
+                        ),
+                        maxLines: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(useAI ? "인공지능 답변" : "직접 답변"),
+                          Switch(
+                            value: useAI,
+                            onChanged: (value) {
+                              setState(() {
+                                useAI = value;
+                                _answerController.text = value ? aiAnswer : '';
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.end, // 버튼을 오른쪽으로 정렬
+                        children: [
+                          ElevatedButton(
+                              onPressed: () {
+                                ref
+                                    .read(uncompletedComplaintstListProvider
+                                        .notifier)
+                                    .deleteComplaint(complaint);
+                                ref
+                                    .read(completedComplaintstListProvider
+                                        .notifier)
+                                    .addComplaint(complaint.copyWith(
+                                        reply: _answerController.text));
+                                Navigator.pop(context);
+                              },
+                              child: const Text("제출")),
+                          const SizedBox(width: 8.0), // 버튼 사이에 간격 추가
+                          ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text("취소")),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

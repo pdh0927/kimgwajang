@@ -4,7 +4,7 @@ import 'package:kimgwajang/complaint/view/complaint_input_screen.dart';
 import 'package:kimgwajang/complaint/view/complaint_list_screen.dart';
 import 'package:kimgwajang/complaint/view/completed_complaints_list_screen.dart';
 import 'package:kimgwajang/complaint/view/uncompleted_complaints_list_screen.dart';
-import 'package:kimgwajang/user/provider/user_proivder.dart';
+import 'package:kimgwajang/accounts/provider/user_proivder.dart';
 
 class RootTab extends ConsumerStatefulWidget {
   const RootTab({super.key});

@@ -17,6 +17,7 @@ class UserService {
 
       if (isCorrect) {
         completer.complete(value);
+        return;
       }
       completer.completeError("Unable to authenticate, Please check account");
     }).catchError((err) {
