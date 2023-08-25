@@ -11,6 +11,9 @@ class Complaints extends Table {
   TextColumn get imagePath => text()();
   IntColumn get evaluation => integer().nullable()();
   TextColumn get category => text()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }
 
 @UseDao(tables: [Complaints])
