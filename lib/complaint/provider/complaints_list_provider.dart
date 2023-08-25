@@ -19,4 +19,16 @@ class ComplaintsListNotifier extends StateNotifier<List<ComplaintModel>> {
   void addComplaint(ComplaintModel complaintModel) {
     state = [...state, complaintModel];
   }
+
+  void updateComplaint(ComplaintModel updatedComplaint) {
+    List<ComplaintModel> updatedState = state.map((complaint) {
+      if (complaint.title == updatedComplaint.title &&
+          complaint.content == updatedComplaint.content) {
+        return updatedComplaint;
+      }
+      return complaint;
+    }).toList();
+
+    state = updatedState;
+  }
 }
