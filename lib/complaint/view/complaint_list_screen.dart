@@ -10,18 +10,9 @@ class ComplaintListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('나의 민원 목록'),
       ),
-      body: Column(
+      body: const Column(
         children: [
-          const Expanded(child: ComplaintsList()),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: () {
-                // 민원 작성 페이지로 이동하는 로직
-              },
-              child: const Text('민원 작성'),
-            ),
-          ),
+          Expanded(child: ComplaintsList()),
         ],
       ),
     );
