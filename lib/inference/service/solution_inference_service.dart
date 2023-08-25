@@ -16,7 +16,8 @@ class SolutionInferenceService
 
     String payload = _serialize(request);
     inferenceEngine.inference(payload).then((value) {
-      SolvingInferenceResult inferenceResult = SolvingInferenceResult(solution: value);
+      SolvingInferenceResult inferenceResult =
+          SolvingInferenceResult(solution: value);
       completer.complete(inferenceResult);
     });
 
@@ -24,11 +25,10 @@ class SolutionInferenceService
   }
 
   String _serialize(SolutionInferenceRequest request) {
-
-    String contents =
-        "너는 한 기관의 민원 담당이라고 생각하고, 너는 민원 담당 AI이며 이름은 '김과장'이야. "
+    String contents = "너는 한 기관의 민원 담당이라고 생각하고, 너는 민원 담당 AI이며 이름은 '김과장'이야. "
         "내가 민원에 대한 내용을 작성할거야.\n"
-        "너가 생각하는 민원에 대한 해결책을 짧게 알려줘 "
+        "너가 생각하는 민원에 대한 해결책을 짧게 알려줘.\n"
+        "너가 민원을 해결할수 있는 관공서 직원이라 생각하고 답변해줘.\n"
         "\t제목 : ${request.title}\n\t내용 : ${request.content}";
 
     return contents;
