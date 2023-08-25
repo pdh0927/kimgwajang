@@ -36,7 +36,7 @@ class CategorizeInferenceService
 
     String categories = categoryTokens.join(', ');
     String contents =
-        "아래의 글을 토대로 민원을 작성할거야. 카테고리를 나누어줘. 다른 응답 및 말 없이 카테고리 값만 답변해줘\n카테고리 : [$categories]\n"
+        "아래의 글을 토대로 민원을 작성할거야. 내가 주는 카테고리들 중에 가장 관련있는 거를 골라줘. 다른 응답 및 말 없이 카테고리 값만 답변해줘\n카테고리 : [$categories]\n"
         "\t제목 : ${request.title}\n\t내용 : ${request.content}";
     return contents;
   }

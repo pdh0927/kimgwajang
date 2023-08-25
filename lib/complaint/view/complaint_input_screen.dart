@@ -5,7 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kimgwajang/common/function/show_custon_dialog.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
-import 'package:kimgwajang/persistance-db/persistance-db.dart';
+import 'package:kimgwajang/inference/models/category_inference_request.dart';
+import 'package:kimgwajang/inference/models/category_inference_result.dart';
+import 'package:kimgwajang/inference/service/categorize_inference_service.dart';
+
 
 class ComplaintInputScreen extends ConsumerStatefulWidget {
   const ComplaintInputScreen({super.key});
@@ -92,29 +95,36 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
                   onPressed: () {
                     if (titleController.text != '' &&
                         contentController.text != '') {
-                      ref
-                          .read(uncompletedComplaintstListProvider.notifier)
-                          .addComplaint(Complaint(
-                            title: titleController.text,
-                            content: contentController.text,
-                            reply: '',
-                            imagePath: _selectedImageFile == null
-                                ? ''
-                                : _selectedImageFile!.path,
-                            id: '',
-                            category: '',
-                          ));
-                      titleController.text = '';
-                      contentController.text = '';
-                      setState(() {
-                        _selectedImageFile = null;
-                      });
                       // 팝업창 표시
                       showCustomDialog(
                         context: context,
                         title: "알림",
                         content: "민원이 등록되었습니다.",
                       );
+
+                      var service = CategorizeInferenceService();
+                      service
+                          .inference(CategoryInferenceRequest(
+                              title: "민원", content: contentController.text))
+                          .then((response) {
+                        CategoryInferenceResult result = response;
+                        ref
+                            .read(uncompletedComplaintstListProvider.notifier)
+                            .addComplaint(ComplaintModel(
+                              title: titleController.text,
+                              content: contentController.text,
+                              reply: '',
+                              categoryType: result.getCategoryType(),
+                              imagePath: _selectedImageFile == null
+                                  ? ''
+                                  : _selectedImageFile!.path,
+                            ));
+                        titleController.text = '';
+                        contentController.text = '';
+                        setState(() {
+                          _selectedImageFile = null;
+                        });
+                      });
                     }
                   },
                   child: const Text(
