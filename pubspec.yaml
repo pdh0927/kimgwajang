@@ -44,6 +44,9 @@ dependencies:
   moor_flutter:
   sqlite3_flutter_libs:
   dbcrypt: ^2.0.0
+  flutter_riverpod: ^2.3.6
+  image_picker: ^1.0.2
+  flutter_login: ^4.2.0
 
 
 dev_dependencies:
@@ -72,9 +75,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - asset/image/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -101,5 +104,3 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-  assets:
-    - .env
