@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:kimgwajang/inference/models/solution_inference_request.dart';
 import 'package:kimgwajang/inference/models/solution_inference_result.dart';
-import 'package:kimgwajang/inference/service/chatgpt_inference_engine.dart';
+import 'package:kimgwajang/inference/service/idly_inference_engine.dart';
 import 'package:kimgwajang/inference/service/inference_service.dart';
 
 class SolutionInferenceService
     implements
         InferenceService<SolutionInferenceRequest, SolvingInferenceResult> {
-  final ChatGptInferenceEngine inferenceEngine = ChatGptInferenceEngine();
+  final IdlyGptInferenceEngine inferenceEngine = IdlyGptInferenceEngine();
 
   @override
   Future<SolvingInferenceResult> inference(SolutionInferenceRequest request) {
