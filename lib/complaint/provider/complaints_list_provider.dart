@@ -34,6 +34,11 @@ class UncomPletedComplaintsListNotifier
 
     state = updatedState;
   }
+
+  void deleteComplaint(ComplaintModel complaintModel) {
+    state.remove(complaintModel);
+    state = [...state];
+  }
 }
 
 final completedComplaintstListProvider = StateNotifierProvider<
