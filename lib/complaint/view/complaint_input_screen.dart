@@ -114,7 +114,6 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
                           id: uniqueId,
                           title: titleController.text,
                           content: contentController.text,
-                          reply: '',
                           category: result.getCategoryType().value,
                           imagePath: _selectedImageFile == null
                               ? ''

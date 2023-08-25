@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/accounts/provider/user_provider.dart';
+import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
 import 'package:kimgwajang/inference/models/solution_inference_request.dart';
 import 'package:kimgwajang/inference/service/solution_inference_service.dart';
@@ -93,7 +94,7 @@ class ComplaintCard extends ConsumerWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    (complaint.reply == '' && isAdmin)
+                    (complaint.reply == null && isAdmin)
                         ? ElevatedButton(
                             onPressed: () {
                               showDialog(
@@ -218,7 +219,7 @@ class ComplaintCard extends ConsumerWidget {
                             MainAxisAlignment.end, // 버튼을 오른쪽으로 정렬
                         children: [
                           ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 ref
                                     .read(uncompletedComplaintstListProvider
                                         .notifier)
@@ -228,6 +229,10 @@ class ComplaintCard extends ConsumerWidget {
                                         .notifier)
                                     .addComplaint(complaint.copyWith(
                                         reply: _answerController.text));
+                                final dao =
+                                    ComplaintsDao(PersistanceDb.getInstance());
+                                await dao.updateComplaint(complaint.copyWith(
+                                    reply: _answerController.text));
                                 Navigator.pop(context);
                               },
                               child: const Text("제출")),
