@@ -19,12 +19,12 @@ class UncomPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
     state = uncompletedComplaints;
   }
 
-  void addComplaint(Complaint complaintModel) {
-    dao.persistComplaint(complaintModel);
+  void addComplaint(Complaint complaintModel) async {
+    await dao.persistComplaint(complaintModel);
     state = [...state, complaintModel];
   }
 
-  void updateComplaint(Complaint updatedComplaint) {
+  void updateComplaint(Complaint updatedComplaint) async {
     List<Complaint> updatedState = state.map((complaint) {
       if (complaint.title == updatedComplaint.title &&
           complaint.content == updatedComplaint.content) {
@@ -34,7 +34,7 @@ class UncomPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
     }).toList();
 
     state = updatedState;
-    dao.updateComplaint(updatedComplaint);
+    await dao.updateComplaint(updatedComplaint);
   }
 
   void deleteComplaint(Complaint complaintModel) {
@@ -61,12 +61,11 @@ class ComPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
     state = completedComplaints;
   }
 
-  void addComplaint(Complaint complaintModel) {
-    dao.persistComplaint(complaintModel);
+  void addComplaint(Complaint complaintModel) async {
     state = [...state, complaintModel];
   }
 
-  void updateComplaint(Complaint updatedComplaint) {
+  void updateComplaint(Complaint updatedComplaint) async {
     List<Complaint> updatedState = state.map((complaint) {
       if (complaint.title == updatedComplaint.title &&
           complaint.content == updatedComplaint.content) {
@@ -76,6 +75,6 @@ class ComPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
     }).toList();
 
     state = updatedState;
-    dao.updateComplaint(updatedComplaint);
+    await dao.updateComplaint(updatedComplaint);
   }
 }

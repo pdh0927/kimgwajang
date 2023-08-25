@@ -26,10 +26,10 @@ class AccountsDao extends DatabaseAccessor<PersistanceDb>
   createOne() async {
     final account = Account(
         id: '63a6fc05-8263-4e70-93de-f5db58f5634f',
-        username: 'power',
+        username: 'admin',
         password:
             "\$2a\$12\$azO3Oq1OuZqCpDYR74vRAekmE9vUWmXDYkgYJlpUxj6Ff8j13uq0.",
-        role: 'USER');
+        role: 'ADMIN');
     into(accounts).insert(account);
   }
 
