@@ -11,10 +11,7 @@ void main() async {
   await dotenv.load(fileName: ".env");
   PersistanceDb.init();
 
-  // AccountsDao의 인스턴스를 생성합니다.
   // final dao = AccountsDao(PersistanceDb.getInstance());
-
-  // createOne 메서드를 호출합니다.
   // await dao.createOne();
 
   runApp(const ProviderScope(child: _App()));

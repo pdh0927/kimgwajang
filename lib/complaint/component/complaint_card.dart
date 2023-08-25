@@ -231,8 +231,12 @@ class ComplaintCard extends ConsumerWidget {
                                         reply: _answerController.text));
                                 final dao =
                                     ComplaintsDao(PersistanceDb.getInstance());
+                                print(complaint);
+                                print(complaint.copyWith(
+                                    reply: _answerController.text));
                                 await dao.updateComplaint(complaint.copyWith(
                                     reply: _answerController.text));
+
                                 Navigator.pop(context);
                               },
                               child: const Text("제출")),
