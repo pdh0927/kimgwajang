@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kimgwajang/complaint/view/complaint_list_screen.dart';
 
 class RootTab extends StatefulWidget {
   const RootTab({super.key});
@@ -59,7 +60,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           physics: const NeverScrollableScrollPhysics(), // scroll로는 화면 전환 x
           controller: controller,
           children: const [
-            Center(child: Text('민원')),
+            ComplaintListScreen(),
             Center(child: Text('관공서')),
           ]),
     );
