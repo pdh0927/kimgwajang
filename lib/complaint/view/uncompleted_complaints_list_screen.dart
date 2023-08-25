@@ -20,10 +20,18 @@ class _UncompletedComplaintsListScreenState
   CategoryType? selectedCategory;
   List<Complaint> filteredComplaints = [];
 
-  void onCategorySelect(CategoryType categoryType) {
+  void onCategorySelect(CategoryType? categoryType) {
     setState(() {
       selectedCategory = categoryType;
     });
+  }
+
+  @override
+  void initState() {
+    ref
+        .read(uncompletedComplaintstListProvider.notifier)
+        .fetchUncompletedComplaintsData();
+    super.initState();
   }
 
   @override

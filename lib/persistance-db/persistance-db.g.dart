@@ -263,6 +263,7 @@ class Complaint extends DataClass implements Insertable<Complaint> {
   final String imagePath;
   final int? evaluation;
   final String category;
+
   Complaint(
       {required this.id,
       required this.title,

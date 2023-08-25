@@ -23,7 +23,7 @@ class ComplaintService {
     return complaintsDao.persistComplaint(complaint);
   }
 
-  Future<bool> update(Complaint complaint) async {
+  Future<Future> update(Complaint complaint) async {
     return complaintsDao.updateComplaint(complaint);
   }
 

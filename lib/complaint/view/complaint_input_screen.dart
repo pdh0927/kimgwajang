@@ -59,13 +59,23 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '카테고리 걱정없이 편하게 민원을 넣으세요 :)',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
+              const Row(
+                children: [
+                  Image(
+                    image: AssetImage('asset/image/logo_no_word.png'),
+                    width: 60,
+                    height: 60,
+                  ),
+                  Text(
+                    '카테고리 걱정없이 편하게 민원을 넣으세요 :)',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
               ),
+              Divider(thickness: 1, height: 10),
               const SizedBox(height: 20),
               TextField(
                 controller: titleController,
@@ -83,59 +93,66 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
                 ),
                 maxLines: 15,
               ),
+              const SizedBox(height: 10),
               Align(
                   alignment: Alignment.center,
                   child: PickedImage(imageFile: _selectedImageFile)),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ImagePickerButton(onImagePicked: onImagePicked),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (titleController.text != '' &&
-                        contentController.text != '') {
-                      // 팝업창 표시
-                      showCustomDialog(
-                        context: context,
-                        title: "알림",
-                        content: "민원이 등록되었습니다.",
-                      );
-
-                      var service = CategorizeInferenceService();
-                      service
-                          .inference(CategoryInferenceRequest(
-                              title: "민원", content: contentController.text))
-                          .then((response) {
-                        CategoryInferenceResult result = response;
-                        String uniqueId = Uuid().v4();
-                        Complaint newComplaint = Complaint(
-                          id: uniqueId,
-                          title: titleController.text,
-                          content: contentController.text,
-                          category: result.getCategoryType().value,
-                          imagePath: _selectedImageFile == null
-                              ? ''
-                              : _selectedImageFile!.path,
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: ImagePickerButton(onImagePicked: onImagePicked),
+              // ),
+              const SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ImagePickerButton(onImagePicked: onImagePicked),
+                  const SizedBox(width: 5),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (titleController.text != '' &&
+                          contentController.text != '') {
+                        // 팝업창 표시
+                        showCustomDialog(
+                          context: context,
+                          title: "알림",
+                          content: "민원이 등록되었습니다.",
                         );
-                        ref
-                            .read(uncompletedComplaintstListProvider.notifier)
-                            .addComplaint(newComplaint);
 
-                        titleController.text = '';
-                        contentController.text = '';
-                        setState(() {
-                          _selectedImageFile = null;
+                        var service = CategorizeInferenceService();
+                        service
+                            .inference(CategoryInferenceRequest(
+                                title: "민원", content: contentController.text))
+                            .then((response) {
+                          CategoryInferenceResult result = response;
+                          String uniqueId = Uuid().v4();
+                          Complaint newComplaint = Complaint(
+                            id: uniqueId,
+                            title: titleController.text,
+                            content: contentController.text,
+                            category: result.getCategoryType().value,
+                            imagePath: _selectedImageFile == null
+                                ? ''
+                                : _selectedImageFile!.path,
+                          );
+                          ref
+                              .read(uncompletedComplaintstListProvider.notifier)
+                              .addComplaint(newComplaint);
+
+                          titleController.text = '';
+                          contentController.text = '';
+                          setState(() {
+                            _selectedImageFile = null;
+                          });
                         });
-                      });
-                    }
-                  },
-                  child: const Text(
-                    "완료",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      }
+                    },
+                    child: const Text(
+                      "완료",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
                   ),
-                ),
+                ],
               )
             ],
           ),
@@ -216,7 +233,11 @@ class PickedImage extends StatelessWidget {
     if (imageFile != null) {
       return Container(
           height: 200,
-          width: 200,
+          width: double.infinity,
+          decoration: BoxDecoration(
+              color: Color(0xFFF2F2F2),
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(5)),
           padding: const EdgeInsets.symmetric(vertical: 10.0),
           child: Image.file(
             imageFile!,

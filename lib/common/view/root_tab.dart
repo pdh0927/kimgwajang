@@ -49,6 +49,7 @@ class _RootTabState extends ConsumerState<RootTab>
           showUnselectedLabels: true,
           showSelectedLabels: true,
           selectedItemColor: Colors.black,
+          enableFeedback: true,
           unselectedItemColor: Colors.grey,
           selectedFontSize: 10,
           unselectedFontSize: 10,
