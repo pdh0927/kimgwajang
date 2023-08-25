@@ -41,8 +41,12 @@ class ComplaintsDao extends DatabaseAccessor<PersistanceDb>
     return into(complaints).insert(complaint);
   }
 
-  Future<bool> updateComplaint(Complaint complaint) async {
-    return (update(complaints).replace(complaint));
+  Future updateComplaint(Complaint complaint) async {
+    (update(complaints)
+      ..where((c) {
+        return c.id.equals(complaint.id);
+      })
+      ..write(complaint));
   }
 
   Future<int> deleteAll() async {

@@ -220,19 +220,12 @@ class ComplaintCard extends ConsumerWidget {
                         children: [
                           ElevatedButton(
                               onPressed: () async {
-                                ref
-                                    .read(uncompletedComplaintstListProvider
-                                        .notifier)
-                                    .deleteComplaint(complaint);
-                                ref
-                                    .read(completedComplaintstListProvider
-                                        .notifier)
-                                    .addComplaint(complaint.copyWith(
-                                        reply: _answerController.text));
+                                Complaint newComplaint = complaint.copyWith(
+                                    reply: _answerController.text);
+
                                 final dao =
                                     ComplaintsDao(PersistanceDb.getInstance());
-                                await dao.updateComplaint(complaint.copyWith(
-                                    reply: _answerController.text));
+                                await dao.updateComplaint(newComplaint);
                                 Navigator.pop(context);
                               },
                               child: const Text("제출")),
