@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kimgwajang/complaint/view/complaint_input_screen.dart';
 import 'package:kimgwajang/complaint/view/complaint_list_screen.dart';
 
 class RootTab extends StatefulWidget {
@@ -52,16 +53,16 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
           },
           currentIndex: index,
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: '나의 민원'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.notifications), label: '민원')
+                icon: Icon(Icons.notifications), label: '민원 처리')
           ]),
       body: TabBarView(
-          physics: const NeverScrollableScrollPhysics(), // scroll로는 화면 전환 x
+          physics: const NeverScrollableScrollPhysics(),
           controller: controller,
           children: const [
             ComplaintListScreen(),
-            Center(child: Text('관공서')),
+            ComplaintInputScreen(),
           ]),
     );
   }
