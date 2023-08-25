@@ -26,6 +26,10 @@ class ComplaintsDao extends DatabaseAccessor<PersistanceDb>
     return (select(complaints)).get();
   }
 
+  Future<List<Complaint>> findAllReplied() async {
+    return (select(complaints)..where((t) => t.reply.isNotNull())).get();
+  }
+
   Future<int> persistComplaint(Complaint complaint) async {
     return into(complaints).insert(complaint);
   }

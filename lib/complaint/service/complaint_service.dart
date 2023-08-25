@@ -11,6 +11,14 @@ class ComplaintService {
     return complaintsDao.findById(id);
   }
 
+  Future<List<Complaint>> getAll() async {
+    return complaintsDao.findAll();
+  }
+
+  Future<List<Complaint>> getAllReplied() async {
+    return complaintsDao.findAllReplied();
+  }
+
   Future<int> insert(Complaint complaint) async {
     return complaintsDao.persistComplaint(complaint);
   }
