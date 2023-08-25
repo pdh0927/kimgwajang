@@ -22,7 +22,7 @@ class ComplaintCard extends ConsumerWidget {
       title: Row(
         children: [
           Container(
-            width: 78,
+            width: 80,
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
