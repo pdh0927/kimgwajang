@@ -44,7 +44,10 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('민원 입력하기'),
+        title: const Text(
+          '민원 입력하기',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -90,7 +93,7 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
                     if (titleController.text != '' &&
                         contentController.text != '') {
                       ref
-                          .read(complaintstListProvider.notifier)
+                          .read(uncompletedComplaintstListProvider.notifier)
                           .addComplaint(ComplaintModel(
                             title: titleController.text,
                             content: contentController.text,

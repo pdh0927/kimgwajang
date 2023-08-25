@@ -4,19 +4,18 @@ import 'package:kimgwajang/complaint/component/complaints_list.dart';
 import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
 
-class ComplaintListScreen extends ConsumerWidget {
-  const ComplaintListScreen({super.key});
+class UncompletedComplaintsListScreen extends ConsumerWidget {
+  const UncompletedComplaintsListScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     List<ComplaintModel> complaints =
-        ref.watch(uncompletedComplaintstListProvider) +
-            ref.watch(completedComplaintstListProvider);
+        ref.watch(uncompletedComplaintstListProvider);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          '나의 민원 목록',
+          '미처리 민원 목록',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
         ),
       ),

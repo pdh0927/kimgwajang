@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
+import 'package:kimgwajang/user/provider/user_proivder.dart';
 
 class ComplaintCard extends ConsumerWidget {
   final ComplaintModel complaint;
@@ -15,52 +16,101 @@ class ComplaintCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    String statusLabel = complaint.reply.isEmpty ? '처리중' : '처리 완료';
-    Color labelColor = complaint.reply.isEmpty ? Colors.grey : Colors.green;
+    bool isAdmin = ref.watch(userProvider)!.isAdmin;
+    String statusLabel = complaint.reply.isEmpty
+        ? '처리중'
+        : (isAdmin
+            ? (complaint.evaluation != null)
+                ? '평가 완료'
+                : '평가중'
+            : '처리 완료');
+    Color labelColor = (statusLabel == '처리중' && isAdmin)
+        ? Colors.grey
+        : (statusLabel == '평가 완료' || statusLabel == '처리 완료')
+            ? Colors.green
+            : Colors.orange;
 
-    return ExpansionTile(
-      title: Row(
-        children: [
-          Container(
-            width: 78,
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: labelColor,
-              borderRadius: BorderRadius.circular(15),
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ExpansionTile(
+        title: Row(
+          children: [
+            Container(
+              width: 80,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: labelColor,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(statusLabel,
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold)),
             ),
-            child: Text(statusLabel,
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
+            const SizedBox(width: 8),
+            Expanded(
+                child: Text(complaint.title,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold))),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('내용:',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                const SizedBox(height: 5),
+                Text(complaint.content,
+                    style: const TextStyle(color: Colors.black54)),
+                if (complaint.imagePath != '')
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.file(
+                        File(complaint.imagePath),
+                        width: 125,
+                        height: 125,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 10),
+                const Text('답변:',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 5),
+                Text(complaint.reply,
+                    style:
+                        const TextStyle(fontSize: 16, color: Colors.black54)),
+                if (complaint.reply.isNotEmpty)
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: (complaint.evaluation != null)
+                          ? Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: _buildStars(complaint.evaluation),
+                            )
+                          : (!isAdmin
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    _showRatingOptions(context, complaint, ref);
+                                  },
+                                  child: const Text('답변 평가하기'),
+                                )
+                              : SizedBox.shrink()))
+              ],
+            ),
           ),
-          const SizedBox(width: 8),
-          Expanded(child: Text(complaint.title)),
         ],
       ),
-      children: [
-        ListTile(title: Text('내용: ${complaint.content}')),
-        if (complaint.imagePath != '')
-          Image.file(
-            File(complaint.imagePath),
-            width: 125,
-            height: 125,
-            fit: BoxFit.fill,
-          ),
-        ListTile(title: Text('답변: ${complaint.reply}')),
-        complaint.evaluation != null
-            ? ListTile(
-                title: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: _buildStars(complaint.evaluation),
-              ))
-            : ListTile(
-                title: ElevatedButton(
-                onPressed: () {
-                  _showRatingOptions(context, complaint, ref);
-                },
-                child: const Text('답변 평가하기'),
-              )),
-      ],
     );
   }
 
@@ -126,7 +176,7 @@ class ComplaintCard extends ConsumerWidget {
       ComplaintModel complaint, int rating) {
     return InkWell(
       onTap: () {
-        ref.read(complaintstListProvider.notifier).updateComplaint(
+        ref.read(uncompletedComplaintstListProvider.notifier).updateComplaint(
               complaint.copyWith(evaluation: rating),
             );
         Navigator.pop(context);

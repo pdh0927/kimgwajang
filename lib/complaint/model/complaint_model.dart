@@ -32,4 +32,9 @@ class ComplaintModel {
       evaluation: evaluation ?? this.evaluation,
     );
   }
+
+  @override
+  String toString() {
+    return 'ComplaintModel(id: $id, title: $title, content: $content, reply: $reply, imagePath: $imagePath, evaluation: $evaluation)';
+  }
 }

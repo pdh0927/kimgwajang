@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/complaint/view/complaint_input_screen.dart';
 import 'package:kimgwajang/complaint/view/complaint_list_screen.dart';
+import 'package:kimgwajang/complaint/view/completed_complaints_list_screen.dart';
+import 'package:kimgwajang/complaint/view/uncompleted_complaints_list_screen.dart';
+import 'package:kimgwajang/user/provider/user_proivder.dart';
 
-class RootTab extends StatefulWidget {
+class RootTab extends ConsumerStatefulWidget {
   const RootTab({super.key});
 
   @override
-  State<RootTab> createState() => _RootTabState();
+  ConsumerState<RootTab> createState() => _RootTabState();
 }
 
-class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
+class _RootTabState extends ConsumerState<RootTab>
+    with SingleTickerProviderStateMixin {
   late TabController
       controller; // late : 나중에 무조건 null이 아니라 controller 사용전에 세팅 한다
 
@@ -38,6 +43,7 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    bool isAdmin = ref.watch(userProvider)!.isAdmin;
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
           showUnselectedLabels: true,
@@ -52,18 +58,31 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin {
                 .animateTo((index)); // 현재 탭과 인덱스가 다를 경우, 애니메이션을 사용하여 탭을 부드럽게 전환
           },
           currentIndex: index,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: '나의 민원'),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.notifications), label: '민원 처리')
-          ]),
+          items: isAdmin
+              ? const [
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.edit_document), label: '미처리 민원'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.check), label: '처리 민원')
+                ]
+              : const [
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.home), label: '나의 민원'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.notifications), label: '민원 처리')
+                ]),
       body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
           controller: controller,
-          children: const [
-            ComplaintListScreen(),
-            ComplaintInputScreen(),
-          ]),
+          children: isAdmin
+              ? const [
+                  UncompletedComplaintsListScreen(),
+                  CompletedComplaintsListScreen(),
+                ]
+              : const [
+                  ComplaintListScreen(),
+                  ComplaintInputScreen(),
+                ]),
     );
   }
 }
