@@ -15,8 +15,20 @@ class LoginScreen extends ConsumerWidget {
 
   Duration get loginTime => const Duration(milliseconds: 2250);
 
-  Future<String?> _authUser(LoginData data) {
+  Future<String?> _authUser(LoginData data, WidgetRef ref) {
     debugPrint('Name: ${data.name}, Password: ${data.password}');
+
+    // tmp logic
+    if (data.name == 'admin@gmail.com') {
+      ref
+          .read(userProvider.notifier)
+          .loadUser(UserModel(id: 'admin', isAdmin: true, name: 'admin'));
+    } else {
+      ref
+          .read(userProvider.notifier)
+          .loadUser(UserModel(id: 'user', isAdmin: false, name: 'user'));
+    }
+
     return Future.delayed(loginTime).then((_) {
       if (!users.containsKey(data.name)) {
         return 'User not exists';
@@ -50,16 +62,9 @@ class LoginScreen extends ConsumerWidget {
     return FlutterLogin(
       title: '김과장',
       logo: const AssetImage('asset/image/logo.png'),
-      onLogin: _authUser,
+      onLogin: (data) => _authUser(data, ref),
       onSignup: _signupUser,
       onSubmitAnimationCompleted: () {
-        ref
-            .read(userProvider.notifier)
-            .loadUser(UserModel(id: 'tmp', isAdmin: true, name: 'admin'));
-        // ref
-        //     .read(userProvider.notifier)
-        //     .loadUser(UserModel(id: 'tmp', isAdmin: true, name: 'user'));
-
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const RootTab(),
         ));
