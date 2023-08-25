@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kimgwajang/common/function/show_custon_dialog.dart';
-import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
 import 'package:kimgwajang/inference/models/category_inference_request.dart';
 import 'package:kimgwajang/inference/models/category_inference_result.dart';
 import 'package:kimgwajang/inference/service/categorize_inference_service.dart';
+
 
 class ComplaintInputScreen extends ConsumerStatefulWidget {
   const ComplaintInputScreen({super.key});

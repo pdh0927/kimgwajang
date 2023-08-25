@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/complaint/component/complaints_list.dart';
-import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
 import 'package:kimgwajang/inference/models/category_type.dart';
+
 
 class CompletedComplaintsListScreen extends ConsumerStatefulWidget {
   const CompletedComplaintsListScreen({super.key});
@@ -35,6 +35,7 @@ class _CompletedComplaintsListScreenState
     } else {
       filteredComplaints = complaints;
     }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
