@@ -8,7 +8,8 @@ import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
 import 'package:kimgwajang/inference/models/category_inference_request.dart';
 import 'package:kimgwajang/inference/models/category_inference_result.dart';
 import 'package:kimgwajang/inference/service/categorize_inference_service.dart';
-
+import 'package:kimgwajang/persistance-db/persistance-db.dart';
+import 'package:uuid/uuid.dart';
 
 class ComplaintInputScreen extends ConsumerStatefulWidget {
   const ComplaintInputScreen({super.key});
@@ -108,17 +109,21 @@ class _ComplaintInputScreenState extends ConsumerState<ComplaintInputScreen> {
                               title: "민원", content: contentController.text))
                           .then((response) {
                         CategoryInferenceResult result = response;
+                        String uniqueId = Uuid().v4();
+                        Complaint newComplaint = Complaint(
+                          id: uniqueId,
+                          title: titleController.text,
+                          content: contentController.text,
+                          reply: '',
+                          category: result.getCategoryType().value,
+                          imagePath: _selectedImageFile == null
+                              ? ''
+                              : _selectedImageFile!.path,
+                        );
                         ref
                             .read(uncompletedComplaintstListProvider.notifier)
-                            .addComplaint(ComplaintModel(
-                              title: titleController.text,
-                              content: contentController.text,
-                              reply: '',
-                              categoryType: result.getCategoryType(),
-                              imagePath: _selectedImageFile == null
-                                  ? ''
-                                  : _selectedImageFile!.path,
-                            ));
+                            .addComplaint(newComplaint);
+
                         titleController.text = '';
                         contentController.text = '';
                         setState(() {

@@ -5,7 +5,7 @@ import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
 
 import 'package:kimgwajang/complaint/view/completed_complaints_list_screen.dart';
 import 'package:kimgwajang/inference/models/category_type.dart';
-
+import 'package:kimgwajang/persistance-db/persistance-db.dart';
 
 class UncompletedComplaintsListScreen extends ConsumerStatefulWidget {
   const UncompletedComplaintsListScreen({super.key});
@@ -18,7 +18,7 @@ class UncompletedComplaintsListScreen extends ConsumerStatefulWidget {
 class _UncompletedComplaintsListScreenState
     extends ConsumerState<UncompletedComplaintsListScreen> {
   CategoryType? selectedCategory;
-  List<ComplaintModel> filteredComplaints = [];
+  List<Complaint> filteredComplaints = [];
 
   void onCategorySelect(CategoryType categoryType) {
     setState(() {
@@ -28,11 +28,10 @@ class _UncompletedComplaintsListScreenState
 
   @override
   Widget build(BuildContext context) {
-    List<ComplaintModel> complaints =
-        ref.watch(uncompletedComplaintstListProvider);
+    List<Complaint> complaints = ref.watch(uncompletedComplaintstListProvider);
     if (selectedCategory != null) {
       filteredComplaints = complaints
-          .where((complaint) => complaint.categoryType == selectedCategory)
+          .where((complaint) => complaint.category == selectedCategory!.value)
           .toList();
     } else {
       filteredComplaints = complaints;

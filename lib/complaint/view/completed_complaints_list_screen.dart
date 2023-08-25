@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/complaint/component/complaints_list.dart';
 import 'package:kimgwajang/complaint/provider/complaints_list_provider.dart';
 import 'package:kimgwajang/inference/models/category_type.dart';
-
+import 'package:kimgwajang/persistance-db/persistance-db.dart';
 
 class CompletedComplaintsListScreen extends ConsumerStatefulWidget {
   const CompletedComplaintsListScreen({super.key});
@@ -16,7 +16,7 @@ class CompletedComplaintsListScreen extends ConsumerStatefulWidget {
 class _CompletedComplaintsListScreenState
     extends ConsumerState<CompletedComplaintsListScreen> {
   CategoryType? selectedCategory;
-  List<ComplaintModel> filteredComplaints = [];
+  List<Complaint> filteredComplaints = [];
 
   void onCategorySelect(CategoryType categoryType) {
     setState(() {
@@ -26,11 +26,10 @@ class _CompletedComplaintsListScreenState
 
   @override
   Widget build(BuildContext context) {
-    List<ComplaintModel> complaints =
-        ref.watch(completedComplaintstListProvider);
+    List<Complaint> complaints = ref.watch(completedComplaintstListProvider);
     if (selectedCategory != null) {
       filteredComplaints = complaints
-          .where((complaint) => complaint.categoryType == selectedCategory)
+          .where((complaint) => complaint.category == selectedCategory!.value)
           .toList();
     } else {
       filteredComplaints = complaints;
@@ -62,7 +61,7 @@ class _CompletedComplaintsListScreenState
 
 class CategorySelector extends StatefulWidget {
   final Function(CategoryType) onCategorySelect;
-  final List<ComplaintModel> complaints;
+  final List<Complaint> complaints;
 
   const CategorySelector(
       {super.key, required this.complaints, required this.onCategorySelect});

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kimgwajang/complaint/const/data.dart';
+import 'package:kimgwajang/complaint/model/complaint_model.dart';
 import 'package:kimgwajang/persistance-db/persistance-db.dart';
 
 final uncompletedComplaintstListProvider =
@@ -12,14 +12,15 @@ class UncomPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
   UncomPletedComplaintsListNotifier() : super([]) {
     fetchUncompletedComplaintsData();
   }
+  final dao = ComplaintsDao(PersistanceDb.getInstance());
 
-  void fetchUncompletedComplaintsData() {
-    // reply != ''인 complaints 불러오기
-
+  void fetchUncompletedComplaintsData() async {
+    List<Complaint> uncompletedComplaints = await dao.findAllNotReplied();
     state = uncompletedComplaints;
   }
 
   void addComplaint(Complaint complaintModel) {
+    dao.persistComplaint(complaintModel);
     state = [...state, complaintModel];
   }
 
@@ -33,6 +34,7 @@ class UncomPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
     }).toList();
 
     state = updatedState;
+    dao.updateComplaint(updatedComplaint);
   }
 
   void deleteComplaint(Complaint complaintModel) {
@@ -51,14 +53,16 @@ class ComPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
   ComPletedComplaintsListNotifier() : super([]) {
     fetchCompletedComplaintsData();
   }
+  final dao = ComplaintsDao(PersistanceDb.getInstance());
 
-  void fetchCompletedComplaintsData() {
-    // reply != ''인 complaints 불러오기
+  void fetchCompletedComplaintsData() async {
+    List<Complaint> completedComplaints = await dao.findAllReplied();
 
     state = completedComplaints;
   }
 
   void addComplaint(Complaint complaintModel) {
+    dao.persistComplaint(complaintModel);
     state = [...state, complaintModel];
   }
 
@@ -72,5 +76,6 @@ class ComPletedComplaintsListNotifier extends StateNotifier<List<Complaint>> {
     }).toList();
 
     state = updatedState;
+    dao.updateComplaint(updatedComplaint);
   }
 }
