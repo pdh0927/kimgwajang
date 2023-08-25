@@ -1,4 +1,3 @@
-
 import 'package:kimgwajang/persistance-db/persistance-db.dart';
 import 'package:moor/moor.dart';
 
@@ -29,6 +28,10 @@ class ComplaintsDao extends DatabaseAccessor<PersistanceDb>
 
   Future<List<Complaint>> findAllReplied() async {
     return (select(complaints)..where((t) => t.reply.isNotNull())).get();
+  }
+
+  Future<List<Complaint>> findAllNotReplied() async {
+    return (select(complaints)..where((t) => t.reply.isNull())).get();
   }
 
   Future<int> persistComplaint(Complaint complaint) async {
