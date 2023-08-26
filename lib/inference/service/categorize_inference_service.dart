@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:kimgwajang/inference/models/category_inference_request.dart';
 import 'package:kimgwajang/inference/models/category_inference_result.dart';
 import 'package:kimgwajang/inference/models/category_type.dart';
-import 'package:kimgwajang/inference/service/idly_inference_engine.dart';
+import 'package:kimgwajang/inference/service/chatgpt_inference_engine.dart';
 import 'package:kimgwajang/inference/service/inference_service.dart';
 
 class CategorizeInferenceService
     implements
         InferenceService<CategoryInferenceRequest, CategoryInferenceResult> {
-  final IdlyGptInferenceEngine inferenceEngine = IdlyGptInferenceEngine();
+  final ChatGptInferenceEngine inferenceEngine = ChatGptInferenceEngine();
 
   @override
   Future<CategoryInferenceResult> inference(
