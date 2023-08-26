@@ -10,7 +10,7 @@ DatabaseConnection connect() {
     final db = await WasmDatabase.open(
       databaseName: 'todo-app',
       sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.js'),
+      driftWorkerUri: Uri.parse('drift_worker.dart.js'),
     );
 
     if (db.missingFeatures.isNotEmpty) {
