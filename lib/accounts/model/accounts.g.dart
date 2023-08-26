@@ -2,10 +2,7 @@
 
 part of 'accounts.dart';
 
-// **************************************************************************
-// DaoGenerator
-// **************************************************************************
-
+// ignore_for_file: type=lint
 mixin _$AccountsDaoMixin on DatabaseAccessor<PersistanceDb> {
   $AccountsTable get accounts => attachedDatabase.accounts;
 }

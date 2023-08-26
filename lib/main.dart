@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:kimgwajang/accounts/model/accounts.dart';
 import 'package:kimgwajang/common/view/login_screen.dart';
 import 'package:kimgwajang/persistance-db/persistance-db.dart';
-import 'package:moor/moor.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

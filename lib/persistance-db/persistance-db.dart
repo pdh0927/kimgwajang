@@ -1,28 +1,17 @@
-import 'dart:io';
-
+import 'package:drift/drift.dart';
 import 'package:kimgwajang/accounts/model/accounts.dart';
 import 'package:kimgwajang/complaint/model/complaint_model.dart';
-import 'package:moor/ffi.dart';
-import 'package:moor/moor.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
+
+import 'connection.dart' as impl;
 
 part 'persistance-db.g.dart';
 
-LazyDatabase _openConnection() {
-  return LazyDatabase(() async {
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return VmDatabase(file, logStatements: true);
-  });
-}
-
-@UseMoor(tables: [Accounts, Complaints], daos: [AccountsDao, ComplaintsDao])
+@DriftDatabase(tables: [Accounts, Complaints])
 class PersistanceDb extends _$PersistanceDb {
   static PersistanceDb? _instance;
 
   static void init() {
-    _instance ??= PersistanceDb(_openConnection());
+    _instance ??= PersistanceDb(impl.connect());
   }
 
   static PersistanceDb getInstance() {

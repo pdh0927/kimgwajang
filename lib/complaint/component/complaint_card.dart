@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:drift/drift.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kimgwajang/accounts/provider/user_provider.dart';
 import 'package:kimgwajang/complaint/model/complaint_model.dart';
@@ -18,7 +19,7 @@ class ComplaintCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  material.Widget build(material.BuildContext context, WidgetRef ref) {
     bool isAdmin = ref.watch(userProvider)!.isAdmin;
     String statusLabel = complaint.reply == null
         ? '처리중'
@@ -27,92 +28,98 @@ class ComplaintCard extends ConsumerWidget {
                 ? '평가 완료'
                 : '평가중'
             : '처리 완료');
-    Color labelColor = (statusLabel == '처리중' && isAdmin)
-        ? Colors.grey
+    material.Color labelColor = (statusLabel == '처리중' && isAdmin)
+        ? material.Colors.grey
         : (statusLabel == '평가 완료' || statusLabel == '처리 완료')
-            ? Colors.green
-            : Colors.orange;
+            ? material.Colors.green
+            : material.Colors.orange;
 
-    return Card(
+    return material.Card(
       elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+      shape: material.RoundedRectangleBorder(
+        borderRadius: material.BorderRadius.circular(10),
       ),
-      child: ExpansionTile(
-        title: Row(
+      child: material.ExpansionTile(
+        title: material.Row(
           children: [
-            Container(
+            material.Container(
               width: 80,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
+              alignment: material.Alignment.center,
+              padding: const material.EdgeInsets.symmetric(
+                  horizontal: 8, vertical: 4),
+              decoration: material.BoxDecoration(
                 color: labelColor,
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: material.BorderRadius.circular(15),
               ),
-              child: Text(statusLabel,
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold)),
+              child: material.Text(statusLabel,
+                  style: const material.TextStyle(
+                      color: material.Colors.white,
+                      fontWeight: material.FontWeight.bold)),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-                child: Text(complaint.title,
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold))),
+            const material.SizedBox(width: 8),
+            material.Expanded(
+                child: material.Text(complaint.title,
+                    style: const material.TextStyle(
+                        fontSize: 16, fontWeight: material.FontWeight.bold))),
           ],
         ),
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          material.Padding(
+            padding: const material.EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: material.Column(
+              crossAxisAlignment: material.CrossAxisAlignment.start,
               children: [
-                const Text('내용:',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                const SizedBox(height: 5),
-                Text(complaint.content,
-                    style: const TextStyle(color: Colors.black54)),
+                const material.Text('내용:',
+                    style: material.TextStyle(
+                        fontWeight: material.FontWeight.bold, fontSize: 14)),
+                const material.SizedBox(height: 5),
+                material.Text(complaint.content,
+                    style: const material.TextStyle(
+                        color: material.Colors.black54)),
                 if (complaint.imagePath != '')
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.file(
+                  material.Padding(
+                    padding:
+                        const material.EdgeInsets.symmetric(vertical: 10.0),
+                    child: material.ClipRRect(
+                      borderRadius: material.BorderRadius.circular(10),
+                      child: material.Image.file(
                         File(complaint.imagePath),
                         width: 125,
                         height: 125,
-                        fit: BoxFit.cover,
+                        fit: material.BoxFit.cover,
                       ),
                     ),
                   ),
-                const SizedBox(height: 10),
-                Row(
+                const material.SizedBox(height: 10),
+                material.Row(
                   children: [
-                    const Text('답변:',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(
+                    const material.Text('답변:',
+                        style: material.TextStyle(
+                            fontWeight: material.FontWeight.bold,
+                            fontSize: 16)),
+                    const material.SizedBox(
                       width: 10,
                     ),
                     (complaint.reply == null && isAdmin)
-                        ? ElevatedButton(
+                        ? material.ElevatedButton(
                             onPressed: () {
-                              showDialog(
+                              material.showDialog(
                                 context: context,
                                 barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return const AlertDialog(
-                                    content: Row(
-                                      mainAxisSize: MainAxisSize.min,
+                                builder: (material.BuildContext context) {
+                                  return const material.AlertDialog(
+                                    content: material.Row(
+                                      mainAxisSize: material.MainAxisSize.min,
                                       children: [
-                                        SizedBox(
+                                        material.SizedBox(
                                             height: 13,
                                             width: 13,
-                                            child: CircularProgressIndicator()),
-                                        SizedBox(width: 12),
-                                        Text("AI가 답변을 생성 중입니다"),
-                                        Image(
-                                          image: AssetImage(
+                                            child: material
+                                                .CircularProgressIndicator()),
+                                        material.SizedBox(width: 12),
+                                        material.Text("AI가 답변을 생성 중입니다"),
+                                        material.Image(
+                                          image: material.AssetImage(
                                               'asset/image/logo_no_word.png'),
                                           height: 50,
                                           width: 50,
@@ -132,39 +139,41 @@ class ComplaintCard extends ConsumerWidget {
                                 aiAnswer = value.getSolution();
 
                                 // 다이얼로그 닫기
-                                Navigator.of(context).pop();
+                                material.Navigator.of(context).pop();
 
                                 _showAnswer(context, complaint, ref, aiAnswer!);
                               }).catchError((error) {
                                 // 에러 발생 시 다이얼로그 닫기
-                                Navigator.of(context).pop();
+                                material.Navigator.of(context).pop();
                               });
                             },
-                            child: const Text('답변 하기'),
+                            child: const material.Text('답변 하기'),
                           )
-                        : const SizedBox(height: 0, width: 0)
+                        : const material.SizedBox(height: 0, width: 0)
                   ],
                 ),
-                const SizedBox(height: 5),
-                Text(complaint.reply ?? '',
-                    style:
-                        const TextStyle(fontSize: 16, color: Colors.black54)),
+                const material.SizedBox(height: 5),
+                material.Text(complaint.reply ?? '',
+                    style: const material.TextStyle(
+                        fontSize: 16, color: material.Colors.black54)),
                 if (complaint.reply != null)
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  material.Padding(
+                      padding:
+                          const material.EdgeInsets.symmetric(vertical: 10.0),
                       child: (complaint.evaluation != null)
-                          ? Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                          ? material.Row(
+                              crossAxisAlignment:
+                                  material.CrossAxisAlignment.center,
                               children: _buildStars(complaint.evaluation),
                             )
                           : (!isAdmin
-                              ? ElevatedButton(
+                              ? material.ElevatedButton(
                                   onPressed: () {
                                     _showRatingOptions(context, complaint, ref);
                                   },
-                                  child: const Text('답변 평가하기'),
+                                  child: const material.Text('답변 평가하기'),
                                 )
-                              : const SizedBox(height: 0, width: 0)))
+                              : const material.SizedBox(height: 0, width: 0)))
               ],
             ),
           ),
@@ -173,40 +182,41 @@ class ComplaintCard extends ConsumerWidget {
     );
   }
 
-  void _showAnswer(BuildContext context, Complaint complaint, WidgetRef ref,
-      String aiAnswer) {
-    final TextEditingController _answerController =
-        TextEditingController(text: aiAnswer);
+  void _showAnswer(material.BuildContext context, Complaint complaint,
+      WidgetRef ref, String aiAnswer) {
+    final material.TextEditingController _answerController =
+        material.TextEditingController(text: aiAnswer);
     bool useAI = true; // 인공지능으로 답변하기가 기본값으로 설정되었습니다.
 
-    showDialog(
+    material.showDialog(
       context: context,
       builder: (context) {
-        return StatefulBuilder(
+        return material.StatefulBuilder(
           builder: (context, setState) {
-            return Dialog(
-              insetPadding: const EdgeInsets.all(10.0), // 주변의 여백 조정
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+            return material.Dialog(
+              insetPadding: const material.EdgeInsets.all(10.0), // 주변의 여백 조정
+              child: material.SingleChildScrollView(
+                child: material.Padding(
+                  padding: const material.EdgeInsets.all(16.0),
+                  child: material.Column(
+                    mainAxisSize: material.MainAxisSize.min,
                     children: [
-                      Text('민원 제목: ${complaint.title}'),
-                      const SizedBox(height: 16.0),
-                      TextField(
+                      material.Text('민원 제목: ${complaint.title}'),
+                      const material.SizedBox(height: 16.0),
+                      material.TextField(
                         controller: _answerController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        decoration: const material.InputDecoration(
+                          border: material.OutlineInputBorder(),
                           labelText: '답변 입력',
                         ),
                         maxLines: 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      material.Row(
+                        mainAxisAlignment:
+                            material.MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(useAI ? "인공지능 답변" : "직접 답변"),
-                          Switch(
+                          material.Text(useAI ? "인공지능 답변" : "직접 답변"),
+                          material.Switch(
                             value: useAI,
                             onChanged: (value) {
                               setState(() {
@@ -217,14 +227,15 @@ class ComplaintCard extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      Row(
+                      material.Row(
                         mainAxisAlignment:
-                            MainAxisAlignment.end, // 버튼을 오른쪽으로 정렬
+                            material.MainAxisAlignment.end, // 버튼을 오른쪽으로 정렬
                         children: [
-                          ElevatedButton(
+                          material.ElevatedButton(
                               onPressed: () async {
                                 Complaint newComplaint = complaint.copyWith(
-                                    reply: _answerController.text);
+                                    reply: Value.ofNullable(
+                                        _answerController.text));
                                 ref
                                     .read(completedComplaintstListProvider
                                         .notifier)
@@ -237,16 +248,17 @@ class ComplaintCard extends ConsumerWidget {
                                 final dao =
                                     ComplaintsDao(PersistanceDb.getInstance());
                                 await dao.updateComplaint(complaint.copyWith(
-                                    reply: _answerController.text));
-                                Navigator.pop(context);
+                                    reply: Value.ofNullable(
+                                        _answerController.text)));
+                                material.Navigator.pop(context);
                               },
-                              child: const Text("제출")),
-                          const SizedBox(width: 8.0), // 버튼 사이에 간격 추가
-                          ElevatedButton(
+                              child: const material.Text("제출")),
+                          const material.SizedBox(width: 8.0), // 버튼 사이에 간격 추가
+                          material.ElevatedButton(
                               onPressed: () {
-                                Navigator.pop(context);
+                                material.Navigator.pop(context);
                               },
-                              child: const Text("취소")),
+                              child: const material.Text("취소")),
                         ],
                       ),
                     ],
@@ -260,61 +272,65 @@ class ComplaintCard extends ConsumerWidget {
     );
   }
 
-  List<Widget> _buildStars(int? evaluation) {
-    List<Widget> stars = [const Text('답변 만족도 : ')];
+  List<material.Widget> _buildStars(int? evaluation) {
+    List<material.Widget> stars = [const material.Text('답변 만족도 : ')];
     for (var i = 0; i < 5; i++) {
-      stars.add(Icon(
-        i < (evaluation ?? 0) ? Icons.star : Icons.star_border,
-        color: Colors.yellow,
+      stars.add(material.Icon(
+        i < (evaluation ?? 0)
+            ? material.Icons.star
+            : material.Icons.star_border,
+        color: material.Colors.yellow,
       ));
     }
     return stars;
   }
 
   void _showRatingOptions(
-      BuildContext context, Complaint complaint, WidgetRef ref) {
-    showDialog(
+      material.BuildContext context, Complaint complaint, WidgetRef ref) {
+    material.showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('답변 평가하기'),
-          titlePadding: const EdgeInsets.all(20),
+      builder: (material.BuildContext context) {
+        return material.AlertDialog(
+          title: const material.Text('답변 평가하기'),
+          titlePadding: const material.EdgeInsets.all(20),
           contentPadding:
-              const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-          content: SizedBox(
+              const material.EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+          content: material.SizedBox(
             height: 336,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: material.Column(
+              mainAxisSize: material.MainAxisSize.min,
               children: [
                 _buildRatingOption(context, ref, '매우 만족',
-                    Icons.sentiment_very_satisfied, complaint, 5),
+                    material.Icons.sentiment_very_satisfied, complaint, 5),
                 _divider(),
                 _buildRatingOption(context, ref, '대체로 만족',
-                    Icons.sentiment_satisfied, complaint, 4),
+                    material.Icons.sentiment_satisfied, complaint, 4),
                 _divider(),
-                _buildRatingOption(
-                    context, ref, '보통', Icons.sentiment_neutral, complaint, 3),
+                _buildRatingOption(context, ref, '보통',
+                    material.Icons.sentiment_neutral, complaint, 3),
                 _divider(),
                 _buildRatingOption(context, ref, '대체로 불만족',
-                    Icons.sentiment_dissatisfied, complaint, 2),
+                    material.Icons.sentiment_dissatisfied, complaint, 2),
                 _divider(),
                 _buildRatingOption(context, ref, '불만족',
-                    Icons.sentiment_very_dissatisfied, complaint, 1),
+                    material.Icons.sentiment_very_dissatisfied, complaint, 1),
                 _divider(),
-                _buildRatingOption(
-                    context, ref, '매우 불만족', Icons.mood_bad, complaint, 0),
+                _buildRatingOption(context, ref, '매우 불만족',
+                    material.Icons.mood_bad, complaint, 0),
               ],
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all<EdgeInsets>(
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 20)),
+          actions: <material.Widget>[
+            material.TextButton(
+              style: material.ButtonStyle(
+                padding:
+                    material.MaterialStateProperty.all<material.EdgeInsets>(
+                        const material.EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 20)),
               ),
-              child: const Text('취소'),
+              child: const material.Text('취소'),
               onPressed: () {
-                Navigator.of(context).pop();
+                material.Navigator.of(context).pop();
               },
             ),
           ],
@@ -323,20 +339,26 @@ class ComplaintCard extends ConsumerWidget {
     );
   }
 
-  Widget _divider() => const Divider(thickness: 1, height: 0);
+  material.Widget _divider() => const material.Divider(thickness: 1, height: 0);
 
-  Widget _buildRatingOption(BuildContext context, WidgetRef ref, String title,
-      IconData icon, Complaint complaint, int rating) {
-    return InkWell(
+  material.Widget _buildRatingOption(
+      material.BuildContext context,
+      WidgetRef ref,
+      String title,
+      material.IconData icon,
+      Complaint complaint,
+      int rating) {
+    return material.InkWell(
       onTap: () {
         ref.read(completedComplaintstListProvider.notifier).updateComplaint(
-              complaint.copyWith(evaluation: rating),
+              complaint.copyWith(evaluation: Value.ofNullable(rating)),
             );
-        Navigator.pop(context);
+        material.Navigator.pop(context);
       },
-      child: ListTile(
-        leading: Icon(icon, color: Theme.of(context).primaryColor),
-        title: Text(title),
+      child: material.ListTile(
+        leading:
+            material.Icon(icon, color: material.Theme.of(context).primaryColor),
+        title: material.Text(title),
       ),
     );
   }

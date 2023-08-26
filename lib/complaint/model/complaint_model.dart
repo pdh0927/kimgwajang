@@ -1,5 +1,5 @@
+import 'package:drift/drift.dart';
 import 'package:kimgwajang/persistance-db/persistance-db.dart';
-import 'package:moor/moor.dart';
 
 part 'complaint_model.g.dart';
 
@@ -16,7 +16,7 @@ class Complaints extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@UseDao(tables: [Complaints])
+@DriftAccessor(tables: [Complaints])
 class ComplaintsDao extends DatabaseAccessor<PersistanceDb>
     with _$ComplaintsDaoMixin {
   ComplaintsDao(PersistanceDb db) : super(db);

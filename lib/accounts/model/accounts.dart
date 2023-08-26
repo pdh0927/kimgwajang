@@ -1,6 +1,5 @@
-import 'package:kimgwajang/accounts/model/account_role.dart';
+import 'package:drift/drift.dart';
 import 'package:kimgwajang/persistance-db/persistance-db.dart';
-import 'package:moor/moor.dart';
 
 part 'accounts.g.dart';
 
@@ -14,7 +13,7 @@ class Accounts extends Table {
   List<String> get customConstraints => ['UNIQUE (username)'];
 }
 
-@UseDao(tables: [Accounts])
+@DriftAccessor(tables: [Accounts])
 class AccountsDao extends DatabaseAccessor<PersistanceDb>
     with _$AccountsDaoMixin {
   AccountsDao(PersistanceDb db) : super(db);

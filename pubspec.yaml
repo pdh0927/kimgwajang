@@ -37,21 +37,24 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^1.1.0
   flutter_dotenv: ^5.1.0
-  moor: ^4.6.1+1
-  path_provider: ^2.1.0
+  
   uuid: ^3.0.7
   get_it:
-  moor_flutter:
-  sqlite3_flutter_libs:
   dbcrypt: ^2.0.0
   flutter_riverpod: ^2.3.6
   image_picker: ^1.0.2
   flutter_login: ^4.2.0
-  
+
+  drift: ^2.11.0
+  sqlite3_flutter_libs: ^0.5.0
+  path_provider: ^2.0.0
+  path: ^1.8.3
 
 dev_dependencies:
-  moor_generator:
-  build_runner:
+  drift_dev: ^2.11.0
+  build_runner: ^2.4.6
+
+
 
   flutter_test:
     sdk: flutter

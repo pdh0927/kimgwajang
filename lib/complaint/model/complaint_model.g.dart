@@ -2,10 +2,7 @@
 
 part of 'complaint_model.dart';
 
-// **************************************************************************
-// DaoGenerator
-// **************************************************************************
-
+// ignore_for_file: type=lint
 mixin _$ComplaintsDaoMixin on DatabaseAccessor<PersistanceDb> {
   $ComplaintsTable get complaints => attachedDatabase.complaints;
 }

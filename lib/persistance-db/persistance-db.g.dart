@@ -2,35 +2,104 @@
 
 part of 'persistance-db.dart';
 
-// **************************************************************************
-// MoorGenerator
-// **************************************************************************
-
 // ignore_for_file: type=lint
+class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AccountsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _usernameMeta =
+      const VerificationMeta('username');
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+      'username', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _passwordMeta =
+      const VerificationMeta('password');
+  @override
+  late final GeneratedColumn<String> password = GeneratedColumn<String>(
+      'password', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+      'role', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [id, username, password, role];
+  @override
+  String get aliasedName => _alias ?? 'accounts';
+  @override
+  String get actualTableName => 'accounts';
+  @override
+  VerificationContext validateIntegrity(Insertable<Account> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('username')) {
+      context.handle(_usernameMeta,
+          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
+    } else if (isInserting) {
+      context.missing(_usernameMeta);
+    }
+    if (data.containsKey('password')) {
+      context.handle(_passwordMeta,
+          password.isAcceptableOrUnknown(data['password']!, _passwordMeta));
+    } else if (isInserting) {
+      context.missing(_passwordMeta);
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+          _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
+    } else if (isInserting) {
+      context.missing(_roleMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  Account map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Account(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      username: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}username'])!,
+      password: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}password'])!,
+      role: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}role'])!,
+    );
+  }
+
+  @override
+  $AccountsTable createAlias(String alias) {
+    return $AccountsTable(attachedDatabase, alias);
+  }
+}
+
 class Account extends DataClass implements Insertable<Account> {
   final String id;
   final String username;
   final String password;
   final String role;
-  Account(
+  const Account(
       {required this.id,
       required this.username,
       required this.password,
       required this.role});
-  factory Account.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return Account(
-      id: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      username: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}username'])!,
-      password: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}password'])!,
-      role: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}role'])!,
-    );
-  }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -52,7 +121,7 @@ class Account extends DataClass implements Insertable<Account> {
 
   factory Account.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return Account(
       id: serializer.fromJson<String>(json['id']),
       username: serializer.fromJson<String>(json['username']),
@@ -62,7 +131,7 @@ class Account extends DataClass implements Insertable<Account> {
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
+    serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'username': serializer.toJson<String>(username),
@@ -107,17 +176,20 @@ class AccountsCompanion extends UpdateCompanion<Account> {
   final Value<String> username;
   final Value<String> password;
   final Value<String> role;
+  final Value<int> rowid;
   const AccountsCompanion({
     this.id = const Value.absent(),
     this.username = const Value.absent(),
     this.password = const Value.absent(),
     this.role = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   AccountsCompanion.insert({
     required String id,
     required String username,
     required String password,
     required String role,
+    this.rowid = const Value.absent(),
   })  : id = Value(id),
         username = Value(username),
         password = Value(password),
@@ -127,12 +199,14 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     Expression<String>? username,
     Expression<String>? password,
     Expression<String>? role,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (username != null) 'username': username,
       if (password != null) 'password': password,
       if (role != null) 'role': role,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
@@ -140,12 +214,14 @@ class AccountsCompanion extends UpdateCompanion<Account> {
       {Value<String>? id,
       Value<String>? username,
       Value<String>? password,
-      Value<String>? role}) {
+      Value<String>? role,
+      Value<int>? rowid}) {
     return AccountsCompanion(
       id: id ?? this.id,
       username: username ?? this.username,
       password: password ?? this.password,
       role: role ?? this.role,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -164,6 +240,9 @@ class AccountsCompanion extends UpdateCompanion<Account> {
     if (role.present) {
       map['role'] = Variable<String>(role.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -173,337 +252,8 @@ class AccountsCompanion extends UpdateCompanion<Account> {
           ..write('id: $id, ')
           ..write('username: $username, ')
           ..write('password: $password, ')
-          ..write('role: $role')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $AccountsTable extends Accounts with TableInfo<$AccountsTable, Account> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $AccountsTable(this.attachedDatabase, [this._alias]);
-  final VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String?> id = GeneratedColumn<String?>(
-      'id', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _usernameMeta = const VerificationMeta('username');
-  @override
-  late final GeneratedColumn<String?> username = GeneratedColumn<String?>(
-      'username', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _passwordMeta = const VerificationMeta('password');
-  @override
-  late final GeneratedColumn<String?> password = GeneratedColumn<String?>(
-      'password', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _roleMeta = const VerificationMeta('role');
-  @override
-  late final GeneratedColumn<String?> role = GeneratedColumn<String?>(
-      'role', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  @override
-  List<GeneratedColumn> get $columns => [id, username, password, role];
-  @override
-  String get aliasedName => _alias ?? 'accounts';
-  @override
-  String get actualTableName => 'accounts';
-  @override
-  VerificationContext validateIntegrity(Insertable<Account> instance,
-      {bool isInserting = false}) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
-    }
-    if (data.containsKey('username')) {
-      context.handle(_usernameMeta,
-          username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
-    } else if (isInserting) {
-      context.missing(_usernameMeta);
-    }
-    if (data.containsKey('password')) {
-      context.handle(_passwordMeta,
-          password.isAcceptableOrUnknown(data['password']!, _passwordMeta));
-    } else if (isInserting) {
-      context.missing(_passwordMeta);
-    }
-    if (data.containsKey('role')) {
-      context.handle(
-          _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
-    } else if (isInserting) {
-      context.missing(_roleMeta);
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
-  @override
-  Account map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return Account.fromData(data, attachedDatabase,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
-  }
-
-  @override
-  $AccountsTable createAlias(String alias) {
-    return $AccountsTable(attachedDatabase, alias);
-  }
-}
-
-class Complaint extends DataClass implements Insertable<Complaint> {
-  final String id;
-  final String title;
-  final String content;
-  final String? reply;
-  final String imagePath;
-  final int? evaluation;
-  final String category;
-
-  Complaint(
-      {required this.id,
-      required this.title,
-      required this.content,
-      this.reply,
-      required this.imagePath,
-      this.evaluation,
-      required this.category});
-  factory Complaint.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String? prefix}) {
-    final effectivePrefix = prefix ?? '';
-    return Complaint(
-      id: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
-      title: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
-      content: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}content'])!,
-      reply: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}reply']),
-      imagePath: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}image_path'])!,
-      evaluation: const IntType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}evaluation']),
-      category: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}category'])!,
-    );
-  }
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['title'] = Variable<String>(title);
-    map['content'] = Variable<String>(content);
-    if (!nullToAbsent || reply != null) {
-      map['reply'] = Variable<String?>(reply);
-    }
-    map['image_path'] = Variable<String>(imagePath);
-    if (!nullToAbsent || evaluation != null) {
-      map['evaluation'] = Variable<int?>(evaluation);
-    }
-    map['category'] = Variable<String>(category);
-    return map;
-  }
-
-  ComplaintsCompanion toCompanion(bool nullToAbsent) {
-    return ComplaintsCompanion(
-      id: Value(id),
-      title: Value(title),
-      content: Value(content),
-      reply:
-          reply == null && nullToAbsent ? const Value.absent() : Value(reply),
-      imagePath: Value(imagePath),
-      evaluation: evaluation == null && nullToAbsent
-          ? const Value.absent()
-          : Value(evaluation),
-      category: Value(category),
-    );
-  }
-
-  factory Complaint.fromJson(Map<String, dynamic> json,
-      {ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
-    return Complaint(
-      id: serializer.fromJson<String>(json['id']),
-      title: serializer.fromJson<String>(json['title']),
-      content: serializer.fromJson<String>(json['content']),
-      reply: serializer.fromJson<String?>(json['reply']),
-      imagePath: serializer.fromJson<String>(json['imagePath']),
-      evaluation: serializer.fromJson<int?>(json['evaluation']),
-      category: serializer.fromJson<String>(json['category']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'title': serializer.toJson<String>(title),
-      'content': serializer.toJson<String>(content),
-      'reply': serializer.toJson<String?>(reply),
-      'imagePath': serializer.toJson<String>(imagePath),
-      'evaluation': serializer.toJson<int?>(evaluation),
-      'category': serializer.toJson<String>(category),
-    };
-  }
-
-  Complaint copyWith(
-          {String? id,
-          String? title,
-          String? content,
-          String? reply,
-          String? imagePath,
-          int? evaluation,
-          String? category}) =>
-      Complaint(
-        id: id ?? this.id,
-        title: title ?? this.title,
-        content: content ?? this.content,
-        reply: reply ?? this.reply,
-        imagePath: imagePath ?? this.imagePath,
-        evaluation: evaluation ?? this.evaluation,
-        category: category ?? this.category,
-      );
-  @override
-  String toString() {
-    return (StringBuffer('Complaint(')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
-          ..write('content: $content, ')
-          ..write('reply: $reply, ')
-          ..write('imagePath: $imagePath, ')
-          ..write('evaluation: $evaluation, ')
-          ..write('category: $category')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, title, content, reply, imagePath, evaluation, category);
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Complaint &&
-          other.id == this.id &&
-          other.title == this.title &&
-          other.content == this.content &&
-          other.reply == this.reply &&
-          other.imagePath == this.imagePath &&
-          other.evaluation == this.evaluation &&
-          other.category == this.category);
-}
-
-class ComplaintsCompanion extends UpdateCompanion<Complaint> {
-  final Value<String> id;
-  final Value<String> title;
-  final Value<String> content;
-  final Value<String?> reply;
-  final Value<String> imagePath;
-  final Value<int?> evaluation;
-  final Value<String> category;
-  const ComplaintsCompanion({
-    this.id = const Value.absent(),
-    this.title = const Value.absent(),
-    this.content = const Value.absent(),
-    this.reply = const Value.absent(),
-    this.imagePath = const Value.absent(),
-    this.evaluation = const Value.absent(),
-    this.category = const Value.absent(),
-  });
-  ComplaintsCompanion.insert({
-    required String id,
-    required String title,
-    required String content,
-    this.reply = const Value.absent(),
-    required String imagePath,
-    this.evaluation = const Value.absent(),
-    required String category,
-  })  : id = Value(id),
-        title = Value(title),
-        content = Value(content),
-        imagePath = Value(imagePath),
-        category = Value(category);
-  static Insertable<Complaint> custom({
-    Expression<String>? id,
-    Expression<String>? title,
-    Expression<String>? content,
-    Expression<String?>? reply,
-    Expression<String>? imagePath,
-    Expression<int?>? evaluation,
-    Expression<String>? category,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (title != null) 'title': title,
-      if (content != null) 'content': content,
-      if (reply != null) 'reply': reply,
-      if (imagePath != null) 'image_path': imagePath,
-      if (evaluation != null) 'evaluation': evaluation,
-      if (category != null) 'category': category,
-    });
-  }
-
-  ComplaintsCompanion copyWith(
-      {Value<String>? id,
-      Value<String>? title,
-      Value<String>? content,
-      Value<String?>? reply,
-      Value<String>? imagePath,
-      Value<int?>? evaluation,
-      Value<String>? category}) {
-    return ComplaintsCompanion(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      content: content ?? this.content,
-      reply: reply ?? this.reply,
-      imagePath: imagePath ?? this.imagePath,
-      evaluation: evaluation ?? this.evaluation,
-      category: category ?? this.category,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
-    }
-    if (content.present) {
-      map['content'] = Variable<String>(content.value);
-    }
-    if (reply.present) {
-      map['reply'] = Variable<String?>(reply.value);
-    }
-    if (imagePath.present) {
-      map['image_path'] = Variable<String>(imagePath.value);
-    }
-    if (evaluation.present) {
-      map['evaluation'] = Variable<int?>(evaluation.value);
-    }
-    if (category.present) {
-      map['category'] = Variable<String>(category.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ComplaintsCompanion(')
-          ..write('id: $id, ')
-          ..write('title: $title, ')
-          ..write('content: $content, ')
-          ..write('reply: $reply, ')
-          ..write('imagePath: $imagePath, ')
-          ..write('evaluation: $evaluation, ')
-          ..write('category: $category')
+          ..write('role: $role, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -515,41 +265,45 @@ class $ComplaintsTable extends Complaints
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
   $ComplaintsTable(this.attachedDatabase, [this._alias]);
-  final VerificationMeta _idMeta = const VerificationMeta('id');
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<String?> id = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _titleMeta = const VerificationMeta('title');
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String?> title = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
       'title', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _contentMeta = const VerificationMeta('content');
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _contentMeta =
+      const VerificationMeta('content');
   @override
-  late final GeneratedColumn<String?> content = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
       'content', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _replyMeta = const VerificationMeta('reply');
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _replyMeta = const VerificationMeta('reply');
   @override
-  late final GeneratedColumn<String?> reply = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> reply = GeneratedColumn<String>(
       'reply', aliasedName, true,
-      type: const StringType(), requiredDuringInsert: false);
-  final VerificationMeta _imagePathMeta = const VerificationMeta('imagePath');
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _imagePathMeta =
+      const VerificationMeta('imagePath');
   @override
-  late final GeneratedColumn<String?> imagePath = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> imagePath = GeneratedColumn<String>(
       'image_path', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _evaluationMeta = const VerificationMeta('evaluation');
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _evaluationMeta =
+      const VerificationMeta('evaluation');
   @override
-  late final GeneratedColumn<int?> evaluation = GeneratedColumn<int?>(
+  late final GeneratedColumn<int> evaluation = GeneratedColumn<int>(
       'evaluation', aliasedName, true,
-      type: const IntType(), requiredDuringInsert: false);
-  final VerificationMeta _categoryMeta = const VerificationMeta('category');
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _categoryMeta =
+      const VerificationMeta('category');
   @override
-  late final GeneratedColumn<String?> category = GeneratedColumn<String?>(
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
       'category', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns =>
       [id, title, content, reply, imagePath, evaluation, category];
@@ -605,11 +359,26 @@ class $ComplaintsTable extends Complaints
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Complaint map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return Complaint.fromData(data, attachedDatabase,
-        prefix: tablePrefix != null ? '$tablePrefix.' : null);
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Complaint(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      content: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}content'])!,
+      reply: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}reply']),
+      imagePath: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image_path'])!,
+      evaluation: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}evaluation']),
+      category: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}category'])!,
+    );
   }
 
   @override
@@ -618,14 +387,257 @@ class $ComplaintsTable extends Complaints
   }
 }
 
+class Complaint extends DataClass implements Insertable<Complaint> {
+  final String id;
+  final String title;
+  final String content;
+  final String? reply;
+  final String imagePath;
+  final int? evaluation;
+  final String category;
+  const Complaint(
+      {required this.id,
+      required this.title,
+      required this.content,
+      this.reply,
+      required this.imagePath,
+      this.evaluation,
+      required this.category});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['content'] = Variable<String>(content);
+    if (!nullToAbsent || reply != null) {
+      map['reply'] = Variable<String>(reply);
+    }
+    map['image_path'] = Variable<String>(imagePath);
+    if (!nullToAbsent || evaluation != null) {
+      map['evaluation'] = Variable<int>(evaluation);
+    }
+    map['category'] = Variable<String>(category);
+    return map;
+  }
+
+  ComplaintsCompanion toCompanion(bool nullToAbsent) {
+    return ComplaintsCompanion(
+      id: Value(id),
+      title: Value(title),
+      content: Value(content),
+      reply:
+          reply == null && nullToAbsent ? const Value.absent() : Value(reply),
+      imagePath: Value(imagePath),
+      evaluation: evaluation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(evaluation),
+      category: Value(category),
+    );
+  }
+
+  factory Complaint.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Complaint(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      content: serializer.fromJson<String>(json['content']),
+      reply: serializer.fromJson<String?>(json['reply']),
+      imagePath: serializer.fromJson<String>(json['imagePath']),
+      evaluation: serializer.fromJson<int?>(json['evaluation']),
+      category: serializer.fromJson<String>(json['category']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'content': serializer.toJson<String>(content),
+      'reply': serializer.toJson<String?>(reply),
+      'imagePath': serializer.toJson<String>(imagePath),
+      'evaluation': serializer.toJson<int?>(evaluation),
+      'category': serializer.toJson<String>(category),
+    };
+  }
+
+  Complaint copyWith(
+          {String? id,
+          String? title,
+          String? content,
+          Value<String?> reply = const Value.absent(),
+          String? imagePath,
+          Value<int?> evaluation = const Value.absent(),
+          String? category}) =>
+      Complaint(
+        id: id ?? this.id,
+        title: title ?? this.title,
+        content: content ?? this.content,
+        reply: reply.present ? reply.value : this.reply,
+        imagePath: imagePath ?? this.imagePath,
+        evaluation: evaluation.present ? evaluation.value : this.evaluation,
+        category: category ?? this.category,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Complaint(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('reply: $reply, ')
+          ..write('imagePath: $imagePath, ')
+          ..write('evaluation: $evaluation, ')
+          ..write('category: $category')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, title, content, reply, imagePath, evaluation, category);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Complaint &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.content == this.content &&
+          other.reply == this.reply &&
+          other.imagePath == this.imagePath &&
+          other.evaluation == this.evaluation &&
+          other.category == this.category);
+}
+
+class ComplaintsCompanion extends UpdateCompanion<Complaint> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> content;
+  final Value<String?> reply;
+  final Value<String> imagePath;
+  final Value<int?> evaluation;
+  final Value<String> category;
+  final Value<int> rowid;
+  const ComplaintsCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.content = const Value.absent(),
+    this.reply = const Value.absent(),
+    this.imagePath = const Value.absent(),
+    this.evaluation = const Value.absent(),
+    this.category = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ComplaintsCompanion.insert({
+    required String id,
+    required String title,
+    required String content,
+    this.reply = const Value.absent(),
+    required String imagePath,
+    this.evaluation = const Value.absent(),
+    required String category,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        title = Value(title),
+        content = Value(content),
+        imagePath = Value(imagePath),
+        category = Value(category);
+  static Insertable<Complaint> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? content,
+    Expression<String>? reply,
+    Expression<String>? imagePath,
+    Expression<int>? evaluation,
+    Expression<String>? category,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (content != null) 'content': content,
+      if (reply != null) 'reply': reply,
+      if (imagePath != null) 'image_path': imagePath,
+      if (evaluation != null) 'evaluation': evaluation,
+      if (category != null) 'category': category,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ComplaintsCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? title,
+      Value<String>? content,
+      Value<String?>? reply,
+      Value<String>? imagePath,
+      Value<int?>? evaluation,
+      Value<String>? category,
+      Value<int>? rowid}) {
+    return ComplaintsCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      reply: reply ?? this.reply,
+      imagePath: imagePath ?? this.imagePath,
+      evaluation: evaluation ?? this.evaluation,
+      category: category ?? this.category,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (reply.present) {
+      map['reply'] = Variable<String>(reply.value);
+    }
+    if (imagePath.present) {
+      map['image_path'] = Variable<String>(imagePath.value);
+    }
+    if (evaluation.present) {
+      map['evaluation'] = Variable<int>(evaluation.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ComplaintsCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('content: $content, ')
+          ..write('reply: $reply, ')
+          ..write('imagePath: $imagePath, ')
+          ..write('evaluation: $evaluation, ')
+          ..write('category: $category, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$PersistanceDb extends GeneratedDatabase {
-  _$PersistanceDb(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
+  _$PersistanceDb(QueryExecutor e) : super(e);
   late final $AccountsTable accounts = $AccountsTable(this);
   late final $ComplaintsTable complaints = $ComplaintsTable(this);
-  late final AccountsDao accountsDao = AccountsDao(this as PersistanceDb);
-  late final ComplaintsDao complaintsDao = ComplaintsDao(this as PersistanceDb);
   @override
-  Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
+  Iterable<TableInfo<Table, Object?>> get allTables =>
+      allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [accounts, complaints];
 }
