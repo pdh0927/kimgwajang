@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:kimgwajang/inference/service/inference_engine.dart';
 
 class IdlyGptInferenceEngine implements InferenceEngine {
-  final Uri REQUEST_URI = Uri.parse('http://dev.beingidly.com:38531/');
+  final Uri REQUEST_URI = Uri.parse('http://remote.beingidly.com:38532/');
 
   @override
   Future<String> inference(String argument) async {
